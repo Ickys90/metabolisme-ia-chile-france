@@ -1,0 +1,708 @@
+<!doctype html>
+<html lang="fr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Le métabolisme planétaire de l’IA // Chile_France</title>
+<script src="https://cdn.jsdelivr.net/npm/p5@1.9.4/lib/p5.min.js"></script>
+<script>/* Fallback de dessin Canvas 2D pour ouvrir le HTML sans connexion. Le sketch.js
+   reste du vrai code p5.js lorsqu'il est exécuté dans l'éditeur p5.js. */
+if (!window.p5) {
+  (function () {
+    const c = {el:null,ctx:null,fill:'#101510',stroke:'#101510',hasFill:true,hasStroke:true,
+      lineWidth:1,fontSize:11,fontFamily:'monospace',align:'center',baseline:'middle',rectMode:'corner'};
+    window.width=0;window.height=0;window.mouseX=-500;window.mouseY=-500;
+    window.deltaTime=16.67;window.frameCount=0;
+    window.PI=Math.PI;window.CENTER='center';window.CORNER='corner';window.NORMAL='normal';
+    window.sin=Math.sin;window.cos=Math.cos;
+    const start=performance.now(); window.millis=()=>performance.now()-start;
+    function setCtxStyle(){
+      if(!c.ctx)return;
+      c.ctx.font=c.fontSize+'px '+c.fontFamily;
+      c.ctx.textAlign=c.align;
+      c.ctx.textBaseline=c.baseline;
+      c.ctx.lineWidth=c.lineWidth;
+      c.ctx.strokeStyle=c.stroke;
+      c.ctx.fillStyle=c.fill;
+    }
+    function cssColor(arr){
+      if(arr.length===1&&typeof arr[0]==='string')return arr[0];
+      if(arr.length===1&&typeof arr[0]==='number')return `rgb(${arr[0]},${arr[0]},${arr[0]})`;
+      if(arr.length>=3)return `rgba(${arr[0]},${arr[1]},${arr[2]},${(arr[3]??255)/255})`;
+      return '#111';
+    }
+    window.createCanvas=(w,h)=>{
+      window.width=w;window.height=h;
+      c.el=document.createElement('canvas');c.el.width=w;c.el.height=h;
+      c.ctx=c.el.getContext('2d');window.drawingContext=c.ctx;setCtxStyle();
+      let down=false;
+      function relative(ev){const rect=c.el.getBoundingClientRect();window.mouseX=(ev.clientX-rect.left)*(width/rect.width);window.mouseY=(ev.clientY-rect.top)*(height/rect.height);}
+      c.el.addEventListener('pointerdown',ev=>{relative(ev);down=true;c.el.setPointerCapture(ev.pointerId);if(window.mousePressed)window.mousePressed();});
+      c.el.addEventListener('pointermove',ev=>{relative(ev);if(down&&window.mouseDragged)window.mouseDragged();});
+      c.el.addEventListener('pointerup',ev=>{relative(ev);down=false;if(window.mouseReleased)window.mouseReleased();});
+      c.el.addEventListener('pointercancel',()=>{down=false;if(window.mouseReleased)window.mouseReleased();});
+      return {elt:c.el,parent(id){document.getElementById(id).appendChild(c.el)}};
+    };
+    window.resizeCanvas=(w,h)=>{window.width=w;window.height=h;c.el.width=w;c.el.height=h;setCtxStyle();};
+    window.pixelDensity=()=>{};
+    window.background=(...a)=>{c.ctx.save();c.ctx.setTransform(1,0,0,1,0,0);c.ctx.fillStyle=cssColor(a);c.ctx.fillRect(0,0,width,height);c.ctx.restore();};
+    window.push=()=>c.ctx.save();window.pop=()=>c.ctx.restore();
+    window.translate=(x,y)=>c.ctx.translate(x,y);window.scale=(v)=>c.ctx.scale(v,v);window.rotate=(v)=>c.ctx.rotate(v);
+    window.fill=(...a)=>{c.fill=cssColor(a);c.ctx.fillStyle=c.fill;c.hasFill=true;};
+    window.stroke=(...a)=>{c.stroke=cssColor(a);c.ctx.strokeStyle=c.stroke;c.hasStroke=true;};
+    window.noStroke=()=>{c.hasStroke=false;};window.noFill=()=>{c.hasFill=false;};
+    window.strokeWeight=(v)=>{c.lineWidth=v;c.ctx.lineWidth=v;};
+    window.rectMode=(m)=>{c.rectMode=m;};
+    window.rect=(x,y,w,h)=>{
+      h=h??w;if(c.rectMode===window.CENTER){x-=w/2;y-=h/2;}
+      if(c.hasFill)c.ctx.fillRect(x,y,w,h);if(c.hasStroke)c.ctx.strokeRect(x,y,w,h);
+    };
+    window.circle=(x,y,d)=>{c.ctx.beginPath();c.ctx.arc(x,y,d/2,0,Math.PI*2);if(c.hasFill)c.ctx.fill();if(c.hasStroke)c.ctx.stroke();};
+    window.line=(x1,y1,x2,y2)=>{if(!c.hasStroke)return;c.ctx.beginPath();c.ctx.moveTo(x1,y1);c.ctx.lineTo(x2,y2);c.ctx.stroke();};
+    window.textFont=(name)=>{c.fontFamily=name;setCtxStyle();};
+    window.textSize=(size)=>{c.fontSize=size;setCtxStyle();};
+    window.textStyle=()=>{};
+    window.textAlign=(a,b)=>{c.align=a==='center'?'center':a==='left'?'left':'right';c.baseline=b==='center'?'middle':'alphabetic';setCtxStyle();};
+    window.text=(str,x,y)=>{if(c.hasFill)c.ctx.fillText(String(str),x,y);if(c.hasStroke)c.ctx.strokeText(String(str),x,y);};
+    window.textWidth=(str)=>c.ctx.measureText(String(str)).width;
+    window.saveCanvas=(canvas,filename,extension)=>{
+      const anchor=document.createElement('a');anchor.href=c.el.toDataURL('image/png');anchor.download=filename+'.png';anchor.click();
+    };
+    window.addEventListener('resize',()=>{if(window.windowResized)window.windowResized();});
+    window.addEventListener('load',()=>{
+      if(!window.setup||!window.draw)return;
+      window.setup();let last=performance.now();
+      function tick(now){window.deltaTime=Math.min(100,now-last);last=now;
+        window.frameCount++;c.rectMode='corner';c.hasFill=true;c.hasStroke=true;
+        setCtxStyle();window.draw();requestAnimationFrame(tick);}
+      requestAnimationFrame(tick);
+    });
+  })();
+}
+</script>
+</head><body>
+<script>
+/*
+ LE MÉTABOLISME PLANÉTAIRE DE L'INTELLIGENCE ARTIFICIELLE // CHILE_FRANCE
+ Cartographie collective en deux moments (p5.js, mode global)
+
+ JOUR 01 : constellation libre de noms et mots provisoires, sans liens.
+ JOUR 02 : graphe constitué uniquement à partir des fiches saisies.
+   ···  ligne pointillée = recherches (personne -> objet étudié)
+   ───  ligne continue  = interdépendances (objets / territoires)
+
+ Un objet principal par fiche. Séparer plusieurs dépendances, transformations
+ ou territoires par des POINTS-VIRGULES. Les objets identiques sont fusionnés
+ automatiquement; les synonymes se consolident via « Harmoniser un nœud ».
+
+ Pas de serveur : l'enregistrement se fait dans ce navigateur. Exporter en JSON
+ à la fin de chaque journée et réimporter le fichier pour continuer.
+*/
+
+const EVENT_TITLE = "Le métabolisme planétaire de l’intelligence artificielle";
+const PEOPLE = [
+  "Romain Badouard", "Alberto Coddou Mc Manus", "Juana Torres Cierpe",
+  "Rodolfo Martinic Lenta", "Andrés Navas", "Frédéric Hérau",
+  "Laurent Bienvenu", "Joaquín Fontbona", "Julie Marques (TBC)",
+  "Zoé Aegerter", "Emmanuel Ducourneau", "Manuela Garretón",
+  "Nicolás Díaz Bejarano", "Emma Dorval", "Solène Rey-Coquais",
+  "Héctor Morales", "Nicolas Richard"
+];
+const START_WORDS = [
+  "EAU", "ÉNERGIE", "MINÉRAUX", "SOLS", "TRAVAIL", "ALGORITHMES",
+  "CALCUL", "DONNÉES", "CENTRES DE DONNÉES", "CÂBLES SOUS-MARINS",
+  "TERRITOIRES", "RÉGULATION", "MODÈLES D’IA", "PLATEFORMES",
+  "CHALEUR", "EXTRACTION", "MAINTENANCE", "JUSTICE", "ROBOTIQUE"
+];
+const STORAGE_KEY = "metabolisme-chile-france-deux-jours-v1";
+const BG = "#20F300";
+const BLACK = "#101510";
+
+let phase = 1;
+let responses = [];
+let extraConcepts = [];
+let extraLinks = [];
+let editingId = null;
+let graph = {nodes:[], edges:[]};
+let graphPositions = new Map();
+let constellations = [];
+let lastPhaseChange = 0;
+let draggingId = null;
+let selectedId = null;
+let hoveredId = null;
+let graphShowResearch = true;
+let graphShowInterdep = true;
+let motion = 0.7;
+let zoom = 1;
+let startedDemo = false;
+let stageEl;
+let currentCanvas;
+
+const hash = (str) => {
+  let h = 2166136261;
+  for (const ch of String(str)) {h ^= ch.charCodeAt(0); h = Math.imul(h, 16777619);}
+  return h >>> 0;
+};
+const unit = (s) => (hash(s) % 100000) / 100000;
+const clean = (s) => String(s || "").trim().replace(/\s+/g, " ");
+const keyOf = (s) => clean(s).normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/[’']/g,"'").toLowerCase();
+const splitTags = (s) => [...new Map(String(s || "").split(";").map(clean).filter(Boolean).map(x => [keyOf(x),x])).values()];
+const esc = (s) => String(s == null ? "" : s).replace(/[&<>"']/g, c=>({"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#39;"})[c]);
+const uid = () => "r" + Date.now().toString(36) + Math.random().toString(36).slice(2,8);
+const personId = (s) => "p:" + keyOf(s);
+const conceptId = (s) => "c:" + keyOf(s);
+const $ = (id) => document.getElementById(id);
+
+function setup() {
+  buildInterface();
+  restoreLocal();
+  stageEl = $("viz");
+  currentCanvas = createCanvas(Math.max(320,stageEl.clientWidth), Math.max(400,stageEl.clientHeight));
+  currentCanvas.parent("viz");
+  currentCanvas.elt.setAttribute("aria-label", "Cartographie animée des recherches et des interdépendances");
+  currentCanvas.elt.style.touchAction = "none";
+  pixelDensity(1);
+  textFont("monospace");
+  initConstellation();
+  rebuildGraph();
+  renderAll();
+  lastPhaseChange = millis();
+}
+
+function buildInterface() {
+  const st = document.createElement("style");
+  st.textContent = `
+    *{box-sizing:border-box} html,body{margin:0;width:100%;min-height:100%;font-family:Arial,Helvetica,sans-serif;color:#141915;background:#eee}
+    body{overflow-x:hidden} button,input,select,textarea{font:inherit} button{cursor:pointer}
+    #met-app{display:grid;grid-template-columns:minmax(0,1fr) 362px;min-height:100vh;gap:0}
+    #left{display:flex;flex-direction:column;min-width:0;background:#e8e9e6}
+    #masthead{padding:18px 23px 15px;border-bottom:1px solid #d7dbd4;display:flex;justify-content:space-between;gap:14px;align-items:flex-end}
+    #masthead h1{font-size:16px;line-height:1.27;margin:5px 0 0;font-weight:650;letter-spacing:-.3px;max-width:600px}
+    .eyebrow{font:700 10px monospace;text-transform:uppercase;letter-spacing:1px;color:#576057}
+    .location{font:12px monospace;white-space:nowrap;text-align:right}
+    #stage-shell{position:relative;flex:1;min-height:580px;background:${BG};overflow:hidden}
+    #viz{position:absolute;inset:0} #viz canvas{display:block}
+    #phase-caption{position:absolute;left:21px;top:18px;pointer-events:none;font:11px monospace;letter-spacing:.6px;color:${BLACK};background:rgba(32,243,0,.78);padding:4px 5px}
+    #stage-note{position:absolute;left:20px;bottom:21px;max-width:70%;font:11px/1.5 monospace;color:${BLACK};pointer-events:none}
+    #stage-tips{position:absolute;right:20px;bottom:20px;text-align:right;font:10px/1.5 monospace;color:${BLACK};pointer-events:none}
+    #stage-legend{position:absolute;left:20px;top:48px;display:flex;gap:20px;align-items:center;font:11px monospace;pointer-events:none;color:${BLACK}}
+    .solid{display:inline-block;width:34px;border-top:1.5px solid currentColor;vertical-align:middle;margin-right:6px}
+    .dotted{display:inline-block;width:34px;border-top:2px dotted currentColor;vertical-align:middle;margin-right:6px}
+    #sidebar{background:#f7f7f3;border-left:1px solid #d5d8d2;padding:18px 18px 32px;max-height:100vh;overflow-y:auto}
+    #sidebar h2{font-size:15px;letter-spacing:-.2px;margin:0 0 8px} #sidebar h3{font-size:13px;margin:19px 0 9px}
+    .muted{color:#566158;font-size:12px;line-height:1.5}.micro{font-size:10.5px;color:#687167;line-height:1.4}
+    .switch{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin:12px 0 11px}
+    .switch button{padding:11px 8px;background:#e6e8e2;border:1px solid #d0d5cd;border-radius:5px;text-align:center;font-size:12px}
+    .switch button.on{background:#141915;color:#fff;border-color:#141915;font-weight:700}
+    .callout{padding:11px;border:1px solid #d5d9d1;background:#edeee9;border-radius:5px;margin:10px 0;font-size:12px;line-height:1.5}
+    .divider{height:1px;background:#dedfd9;margin:17px 0}
+    label{display:block;font-size:11.5px;font-weight:650;line-height:1.45;margin:11px 0 4px}
+    input[type=text],select,textarea{width:100%;background:#fff;border:1px solid #cbd1c8;border-radius:5px;padding:8px 9px;font-size:12px;outline-color:#253c28}
+    textarea{resize:vertical;min-height:48px} input[type=range]{width:100%;accent-color:#131913}
+    .btn{border:1px solid #202820;background:#fff;border-radius:5px;padding:9px 11px;font-size:12px;text-align:center}
+    .btn:hover{background:#ecefe8}.btn.dark{background:#182218;color:#fff}.btn.dark:hover{background:#384438}
+    .btn.slim{padding:5px 8px;font-size:11px}.btn.line{border-color:#cdd2c9}.btn.danger{color:#a31a16;border-color:#d9b8b6}
+    .btnrow{display:flex;gap:7px;margin-top:9px;flex-wrap:wrap}.btnrow>*{flex:1}
+    .counter{font:11px monospace;color:#505c52;margin:5px 0 10px}
+    .card{padding:10px 9px;margin:8px 0;background:#fff;border:1px solid #dadfd8;border-radius:6px}
+    .card strong{font-size:12px}.card p{font-size:11.5px;line-height:1.42;margin:5px 0;color:#384339}
+    .card .sub{color:#6a746b;font-size:11px}
+    .list{max-height:310px;overflow:auto} .small-line{display:flex;gap:7px;align-items:center;margin:6px 0;justify-content:space-between;font-size:11.5px}
+    .scroll-select{max-height:135px;overflow:auto} .check{display:flex;align-items:center;gap:7px;margin:8px 0;font-size:11px}
+    .check input{accent-color:#161b17}.control-row{display:grid;grid-template-columns:1fr 60px;gap:8px;align-items:center}
+    .status{font:10px monospace;color:#687768;margin:8px 0}
+    .tag{display:inline-block;border:1px solid #d5dcd3;border-radius:3px;padding:2px 5px;font:10px monospace;margin:3px 3px 0 0}
+    .node-editor{font-size:11px;max-height:185px;overflow:auto;border:1px solid #dee3dc;background:#fff;border-radius:5px;padding:7px}
+    .node-row{display:flex;align-items:center;justify-content:space-between;gap:4px;padding:4px 2px;border-bottom:1px solid #eee}
+    .node-row:last-child{border-bottom:0}.node-row button{font-size:10px;background:transparent;border:0;text-decoration:underline;white-space:nowrap}
+    #fileImport{display:none}.foot{padding:10px 23px 14px;border-top:1px solid #d6dad5;font:10px/1.5 monospace;color:#586159;background:#f4f4f0}
+    @media(max-width:1000px){#met-app{grid-template-columns:1fr}#sidebar{max-height:none;border-top:1px solid #ccd2ca;border-left:0}#stage-shell{min-height:530px;height:68vh;flex:none}}
+    @media(max-width:580px){#masthead{display:block} .location{text-align:left;margin-top:10px}#stage-shell{min-height:490px;height:63vh}#stage-note{max-width:85%;font-size:9px}#stage-tips{display:none}}
+  `;
+  document.head.appendChild(st);
+  const root = document.createElement("div");
+  root.id = "met-app";
+  root.innerHTML = `
+    <main id="left">
+      <header id="masthead">
+        <div><div class="eyebrow">Atelier de cartographie collective / CHILE_FRANCE</div>
+          <h1>${esc(EVENT_TITLE)}</h1></div>
+        <div class="location">02 temps · 02 types de liens<br>Chili ↔ France</div>
+      </header>
+      <div id="stage-shell">
+        <div id="viz"></div>
+        <div id="phase-caption"></div><div id="stage-legend"></div>
+        <div id="stage-note"></div><div id="stage-tips">glisser un nœud · cliquer pour l’inspecter</div>
+      </div>
+      <div class="foot">LES POSITIONS DES ÉLÉMENTS SONT DYNAMIQUES ET N’INDIQUENT PAS UNE DISTANCE GÉOGRAPHIQUE. LE JOUR 02 UTILISE LES RÉPONSES SAISIES.</div>
+    </main>
+    <aside id="sidebar">
+      <div class="eyebrow">Cartographie en construction</div>
+      <div class="switch"><button id="p1">01 · Constellation</button><button id="p2">02 · Cartographie</button></div>
+      <div id="phase-description" class="callout"></div>
+      <div id="counts" class="counter"></div>
+      <div class="divider"></div>
+      <h2>Contributions du premier jour</h2>
+      <div class="muted">Une fiche par objet ou phénomène. Les réponses alimentent les nœuds et les liens du jour 02.</div>
+      <label for="who">Participant·e</label><select id="who"></select>
+      <label for="object">1. Quel objet, processus ou phénomène étudiez-vous ?</label>
+      <input id="object" type="text" placeholder="Ex. : centres de données" maxlength="150"/>
+      <label for="depends">2. De quoi cet objet dépend-il ?</label>
+      <textarea id="depends" rows="2" placeholder="Ex. : eau ; électricité ; travail"></textarea>
+      <label for="transforms">Que transforme-t-il ?</label>
+      <textarea id="transforms" rows="2" placeholder="Ex. : température locale ; réseaux électriques"></textarea>
+      <label for="territories">3. À quel territoire ou à quelle échelle ?</label>
+      <textarea id="territories" rows="2" placeholder="Ex. : Quilicura ; Chili-France"></textarea>
+      <div class="micro">Pour séparer plusieurs notions, utilisez un <b>point-virgule ( ; )</b>. Vous pourrez harmoniser les termes avant le jour 02.</div>
+      <div class="btnrow"><button id="saveResponse" class="btn dark">Ajouter la contribution</button><button id="cancelEdit" class="btn" style="display:none">Annuler</button></div>
+      <div id="formNotice" class="status" role="status"></div>
+      <h3>Réponses recueillies</h3><div id="responseCount" class="micro"></div>
+      <div id="responseList" class="list"></div>
+      <div class="divider"></div>
+      <h2>Éditer la carte</h2>
+      <div class="check"><input id="showResearch" type="checkbox" checked><span>··· Recherches</span></div>
+      <div class="check"><input id="showInterdep" type="checkbox" checked><span>— Interdépendances</span></div>
+      <label for="motion">Mouvement</label><div class="control-row"><input type="range" id="motion" min="0" max="100" value="70"><span id="motionLabel" class="micro">70 %</span></div>
+      <label for="zoom">Échelle graphique</label><div class="control-row"><input type="range" id="zoom" min="65" max="165" value="100"><span id="zoomLabel" class="micro">100 %</span></div>
+      <h3>Nœuds du jour 02</h3><div class="micro">La fusion des notions se fait par renommage : le nom est remplacé dans toutes les réponses.</div>
+      <div id="conceptEditor" class="node-editor"></div>
+      <div class="btnrow"><button id="newConcept" class="btn line">+ Nœud libre</button><button id="resetSelection" class="btn line">Désélectionner</button></div>
+      <h3>Ajouter une interdépendance</h3>
+      <label for="edgeA">Objet A</label><select id="edgeA"></select>
+      <label for="edgeVerb">Verbe de relation</label><input type="text" id="edgeVerb" placeholder="dépend de / transforme / alimente…"/>
+      <label for="edgeB">Objet B</label><select id="edgeB"></select>
+      <button id="addEdge" class="btn dark" style="width:100%;margin-top:9px">+ Ligne continue</button>
+      <div id="manualLinksList" class="micro"></div>
+      <div class="divider"></div>
+      <h2>Enregistrer / partager</h2>
+      <div class="btnrow"><button id="exportJSON" class="btn dark">Exporter JSON</button><button id="exportPNG" class="btn">Exporter PNG</button></div>
+      <div class="btnrow"><button id="importJSON" class="btn">Importer JSON</button><select id="importMode" aria-label="Mode d’importation"><option value="merge">Fusionner</option><option value="replace">Remplacer</option></select></div>
+      <input type="file" id="fileImport" accept=".json,application/json"/>
+      <div class="micro" style="margin-top:9px">Enregistrement automatique <b>dans ce navigateur uniquement</b>. Exportez le JSON pour poursuivre le lendemain ou partager les réponses. Plusieurs ordinateurs ne se synchronisent pas en direct.</div>
+      <div class="divider"></div>
+      <div class="btnrow"><button id="loadDemo" class="btn line">Charger une démonstration fictive</button><button id="clearAll" class="btn danger">Effacer les réponses</button></div>
+      <div id="selectionInfo" class="callout" style="display:none"></div>
+    </aside>`;
+  document.body.appendChild(root);
+  $("who").innerHTML = PEOPLE.map(x=>`<option value="${esc(x)}">${esc(x)}</option>`).join("") + `<option value="Autre / invité·e">Autre / invité·e</option>`;
+  $("p1").onclick = ()=> setPhase(1);
+  $("p2").onclick = ()=> setPhase(2);
+  $("saveResponse").onclick = saveResponse;
+  $("cancelEdit").onclick = clearForm;
+  $("responseList").addEventListener("click", responseAction);
+  $("conceptEditor").addEventListener("click", nodeAction);
+  $("manualLinksList").addEventListener("click", linkAction);
+  $("newConcept").onclick = addFreeConcept;
+  $("addEdge").onclick = addManualLink;
+  $("resetSelection").onclick = ()=> {selectedId=null; updateSelection();};
+  $("showResearch").onchange = e=>{graphShowResearch=e.target.checked; persist();};
+  $("showInterdep").onchange = e=>{graphShowInterdep=e.target.checked; persist();};
+  $("motion").oninput = e=>{motion=Number(e.target.value)/100; $("motionLabel").textContent=e.target.value+" %";persist();};
+  $("zoom").oninput = e=>{zoom=Number(e.target.value)/100; $("zoomLabel").textContent=e.target.value+" %";persist();};
+  $("exportJSON").onclick = exportJSON;
+  $("exportPNG").onclick = ()=> saveCanvas(currentCanvas, "metabolisme-chile-france-jour-"+phase,"png");
+  $("importJSON").onclick = ()=> $("fileImport").click();
+  $("fileImport").onchange = importJSON;
+  $("loadDemo").onclick = loadDemo;
+  $("clearAll").onclick = clearAll;
+}
+
+function saveResponse(){
+  const who = clean($("who").value), object = clean($("object").value);
+  if(!object){$("formNotice").textContent = "Précisez un objet de recherche.";$("object").focus();return;}
+  const entry = { id:editingId || uid(), author:who, object,
+    depends:splitTags($("depends").value), transforms:splitTags($("transforms").value),
+    territories:splitTags($("territories").value), demo:false };
+  const i = responses.findIndex(r=>r.id===entry.id);
+  if(i>=0)responses[i]=entry;else responses.push(entry);
+  clearForm(); $("formNotice").textContent = "Contribution enregistrée. Passez au jour 02 pour voir les liens.";
+  changed();
+}
+function clearForm(){
+  editingId=null;["object","depends","transforms","territories"].forEach(k=>$(k).value="");
+  $("saveResponse").textContent="Ajouter la contribution";$("cancelEdit").style.display="none";
+}
+function responseAction(e){
+  const btn=e.target.closest("button[data-action]");if(!btn)return;
+  const entry=responses.find(r=>r.id===btn.dataset.id);if(!entry)return;
+  if(btn.dataset.action==="edit"){
+    editingId=entry.id;
+    if(!PEOPLE.includes(entry.author)){const select=$("who");const opt=document.createElement("option");opt.value=entry.author;opt.textContent=entry.author;select.add(opt);}
+    $("who").value=entry.author;
+    $("object").value=entry.object; $("depends").value=entry.depends.join(" ; ");
+    $("transforms").value=entry.transforms.join(" ; ");$("territories").value=entry.territories.join(" ; ");
+    $("saveResponse").textContent="Enregistrer les modifications";$("cancelEdit").style.display="inline-block";
+    $("object").focus();$("sidebar").scrollTo({top:0,behavior:"smooth"});
+  }else if(btn.dataset.action==="delete"){
+    if(!confirm("Supprimer cette contribution ?"))return;
+    responses=responses.filter(r=>r.id!==entry.id);if(editingId===entry.id)clearForm();changed();
+  }
+}
+function conceptNames(){
+  const found=new Map();
+  for(const r of responses){
+    for(const word of [r.object,...r.depends,...r.transforms,...r.territories]){
+      if(clean(word)&&!found.has(keyOf(word)))found.set(keyOf(word),clean(word));
+    }
+  }
+  for(const word of extraConcepts){if(!found.has(keyOf(word)))found.set(keyOf(word),word);}
+  return [...found.values()].sort((a,b)=>a.localeCompare(b,"fr"));
+}
+function renameConcept(oldName,newName){
+  newName=clean(newName);if(!newName||keyOf(newName)===keyOf(oldName)&&newName===oldName)return;
+  const replacement=s=>keyOf(s)===keyOf(oldName)?newName:s;
+  responses=responses.map(r=>({...r,object:replacement(r.object),
+    depends:distinct(r.depends.map(replacement)),transforms:distinct(r.transforms.map(replacement)),
+    territories:distinct(r.territories.map(replacement))}));
+  extraConcepts=distinct(extraConcepts.map(replacement));
+  extraLinks=extraLinks.map(e=>({...e,a:replacement(e.a),b:replacement(e.b)}))
+                       .filter(e=>keyOf(e.a)!==keyOf(e.b));
+  changed();
+}
+const distinct=arr=>[...new Map(arr.map(clean).filter(Boolean).map(x=>[keyOf(x),x])).values()];
+function nodeAction(e){
+  const btn=e.target.closest("button[data-node]");if(!btn)return;
+  const oldName=decodeURIComponent(btn.dataset.node);
+  const newName=prompt("Harmoniser le nom de ce nœud dans toutes les réponses :",oldName);
+  if(newName!==null && clean(newName))renameConcept(oldName,newName);
+}
+function addFreeConcept(){
+  const name=prompt("Nom du nouveau nœud conceptuel :");if(!clean(name))return;
+  if(!conceptNames().some(s=>keyOf(s)===keyOf(name)))extraConcepts.push(clean(name));changed();
+}
+function addManualLink(){
+  const a=$("edgeA").value,b=$("edgeB").value, verb=clean($("edgeVerb").value)||"est lié à";
+  if(!a||!b||keyOf(a)===keyOf(b)){alert("Choisissez deux nœuds différents.");return;}
+  if(extraLinks.some(e=>keyOf(e.a)===keyOf(a)&&keyOf(e.b)===keyOf(b)&&keyOf(e.verb)===keyOf(verb))){alert("Cette relation existe déjà.");return;}
+  extraLinks.push({id:uid(),a,b,verb});$("edgeVerb").value="";changed();
+}
+function linkAction(e){
+  const btn=e.target.closest("button[data-link]");if(!btn)return;
+  extraLinks=extraLinks.filter(x=>x.id!==btn.dataset.link);changed();
+}
+function changed(){rebuildGraph();persist();renderAll();}
+
+function buildGraph(){
+  const nodes=new Map(), edges=new Map();
+  function addPerson(name){
+    const id=personId(name);if(!nodes.has(id))nodes.set(id,{id,label:name,type:"person"});return id;
+  }
+  function addConcept(name,territorial=false){
+    const id=conceptId(name);if(!nodes.has(id))nodes.set(id,{id,label:clean(name),type:territorial?"territory":"concept"});
+    else if(!territorial)nodes.get(id).type="concept";
+    return id;
+  }
+  function addEdge(a,b,type,verb,source){
+    if(a===b)return;
+    const id=type+"|"+a+"|"+b+"|"+keyOf(verb);
+    if(!edges.has(id))edges.set(id,{id,a,b,type,verb,sources:[source]});
+    else if(!edges.get(id).sources.includes(source))edges.get(id).sources.push(source);
+  }
+  PEOPLE.forEach(addPerson);
+  for(const r of responses){
+    const a=addPerson(r.author),o=addConcept(r.object);
+    addEdge(a,o,"research","étudie",r.id);
+    for(const d of r.depends)addEdge(o,addConcept(d),"interdependency","dépend de",r.id);
+    for(const t of r.transforms)addEdge(o,addConcept(t),"interdependency","transforme",r.id);
+    for(const territory of r.territories)addEdge(o,addConcept(territory,true),"interdependency","est situé à / agit à l’échelle de",r.id);
+  }
+  for(const x of extraConcepts)addConcept(x);
+  for(const e of extraLinks)addEdge(addConcept(e.a),addConcept(e.b),"interdependency",e.verb,e.id);
+  return {nodes:[...nodes.values()], edges:[...edges.values()]};
+}
+function rebuildGraph(){
+  const next=buildGraph();
+  for(const n of next.nodes){
+    const previous=graphPositions.get(n.id)||graph.nodes.find(x=>x.id===n.id);
+    const init = constellations.find(x=>keyOf(x.label)===keyOf(n.label));
+    const initX=init?init.x:width/2+(unit(n.id+"x")-.5)*Math.min(width*.65,520);
+    const initY=init?init.y:height/2+(unit(n.id+"y")-.5)*Math.min(height*.65,350);
+    n.x=previous?.x ?? initX;n.y=previous?.y ?? initY;n.vx=previous?.vx??0;n.vy=previous?.vy??0;
+    n.seed=unit(n.id)*30;
+  }
+  graph=next;graphPositions=new Map(graph.nodes.map(x=>[x.id,x]));
+  if(selectedId&&!graphPositions.has(selectedId))selectedId=null;
+  updateSelection();
+}
+function initConstellation(){
+  const labels=[...PEOPLE.map(label=>({label,type:"person"})),...START_WORDS.map(label=>({label,type:"word"}))];
+  const created=[];
+  for(const [i,item] of labels.entries()){
+    let x=0,y=0;
+    for(let attempt=0;attempt<70;attempt++){
+      const u=unit(item.label+"x"+attempt),v=unit(item.label+"y"+attempt);
+      x=width*(.09+.82*u);y=height*(.10+.80*v);
+      if(created.every(p=>Math.abs(p.baseX-x)>(p.label.length+item.label.length)*3.45+7 || Math.abs(p.baseY-y)>25))break;
+    }
+    created.push({...item,baseX:x,baseY:y,x,y,seed:unit(item.label+"phase")*6.283,
+      amplitude:12+unit(item.label+"amp")*26,
+      speed:.55+unit(item.label+"speed")*.55});
+  }
+  constellations=created;
+}
+function setPhase(n){
+  phase=n;lastPhaseChange=millis();selectedId=null;draggingId=null;persist();renderAll();
+}
+function renderAll(){
+  $("p1").classList.toggle("on",phase===1);$("p2").classList.toggle("on",phase===2);
+  $("phase-caption").textContent=phase===1?"JOUR 01 / CONSTELLATION OUVERTE":"JOUR 02 / RÉSEAU COLLECTIF";
+  $("phase-description").innerHTML=phase===1?
+    "<b>Hito 01 · Un désordre volontaire.</b> Les noms et les mots provisoires gravitent indépendamment, sans liens. Les proximités ne signifient rien. Recueillez les trois réponses de chaque personne en fin de journée.":
+    "<b>Hito 02 · Une cartographie issue des réponses.</b> Les notions se constituent à partir des fiches. Les relations de recherche sont pointillées; les interdépendances et ancrages territoriaux sont continus. Harmonisez les notions avant de présenter le réseau.";
+  $("stage-note").textContent=phase===1?
+    "Constellation provisoire : aucune relation n’est attribuée aux participant·es.":
+    responses.length===0?"Aucune contribution pour l’instant : ajoutez une fiche ou chargez la démonstration fictive.":
+    "Réseau issu des fiches · les connexions restent modifiables collectivement.";
+  $("stage-legend").innerHTML=phase===1?"":'<span><span class="dotted"></span> Recherches</span><span><span class="solid"></span> Interdépendances</span>';
+  $("counts").textContent=phase===1?
+    `${PEOPLE.length} participant·es · ${START_WORDS.length} mots provisoires · 0 lien`:
+    `${graph.nodes.length} nœuds · ${graph.edges.filter(e=>e.type==="research").length} recherches · ${graph.edges.filter(e=>e.type==="interdependency").length} interdépendances`;
+  $("showResearch").checked=graphShowResearch;$("showInterdep").checked=graphShowInterdep;
+  $("motion").value=Math.round(motion*100);$("motionLabel").textContent=Math.round(motion*100)+" %";
+  $("zoom").value=Math.round(zoom*100);$("zoomLabel").textContent=Math.round(zoom*100)+" %";
+  renderResponses();renderNodeEditor();renderManualLinks();updateSelection();
+}
+function renderResponses(){
+  $("responseCount").textContent=`${responses.length} fiche(s) · ${new Set(responses.map(r=>keyOf(r.author))).size} participant·e(s) ayant répondu`;
+  $("responseList").innerHTML=responses.length?responses.map(r=>`
+    <div class="card"><strong>${esc(r.author)}</strong> ${r.demo?'<span class="tag">FICTIF</span>':''}
+    <p><b>${esc(r.object)}</b></p>
+    <p class="sub">Dépend de : ${esc(r.depends.join(" · ")||"—")}<br>Transforme : ${esc(r.transforms.join(" · ")||"—")}<br>Territoires : ${esc(r.territories.join(" · ")||"—")}</p>
+    <div class="btnrow"><button class="btn slim line" data-action="edit" data-id="${r.id}">Modifier</button><button class="btn slim danger" data-action="delete" data-id="${r.id}">Supprimer</button></div></div>`).join(""):
+    '<div class="micro" style="padding:10px 0">Aucune réponse. La constellation du jour 01 est volontairement sans liens.</div>';
+}
+function renderNodeEditor(){
+  const names=conceptNames();
+  $("conceptEditor").innerHTML=names.length?names.map(s=>`
+    <div class="node-row"><span>${esc(s)}</span><button data-node="${encodeURIComponent(s)}" title="Harmoniser">Renommer</button></div>`).join(""):
+    '<div class="micro">Les objets apparaîtront après les premières réponses.</div>';
+  const options=names.map(s=>`<option value="${esc(s)}">${esc(s)}</option>`).join("");
+  const a=$("edgeA").value,b=$("edgeB").value;
+  $("edgeA").innerHTML=options;$("edgeB").innerHTML=options;
+  if(names.includes(a))$("edgeA").value=a;
+  if(names.includes(b))$("edgeB").value=b;
+  else if(names.length>1)$("edgeB").selectedIndex=1;
+}
+function renderManualLinks(){
+  $("manualLinksList").innerHTML=extraLinks.length?"<b>Liens ajoutés manuellement :</b>"+extraLinks.map(e=>`
+    <div class="small-line"><span>${esc(e.a)} → ${esc(e.verb)} → ${esc(e.b)}</span>
+      <button class="btn slim line" data-link="${e.id}">×</button></div>`).join(""):"";
+}
+function updateSelection(){
+  const box=$("selectionInfo");if(!box)return;
+  const item=graph.nodes.find(n=>n.id===selectedId);
+  if(!item||phase===1){box.style.display="none";return;}
+  const links=graph.edges.filter(e=>e.a===item.id||e.b===item.id);
+  box.style.display="block";
+  box.innerHTML=`<b>${esc(item.label)}</b><div class="micro">${item.type==="person"?"Participant·e":item.type==="territory"?"Territoire":"Objet / concept"}</div>`+
+    (links.length?links.map(e=>`<p class="micro">${e.type==="research"?"···":"—"} ${esc(e.verb)} : ${esc((graph.nodes.find(n=>n.id===(e.a===item.id?e.b:e.a))||{}).label||"")}</p>`).join(""):'<p class="micro">Aucun lien pour le moment.</p>');
+}
+function draw(){
+  background(BG);
+  push();translate(width/2,height/2);scale(zoom);translate(-width/2,-height/2);
+  if(phase===1){updateConstellation();drawConstellation();}
+  else{updateGraph();drawEdges();drawGraphNodes();}
+  pop();
+}
+function updateConstellation(){
+  const t=millis()/1000 * motion;
+  for(const p of constellations){
+    p.x=p.baseX + p.amplitude*(.72*sin(t*.29*p.speed+p.seed)+.28*sin(t*.58+p.seed*1.7));
+    p.y=p.baseY + p.amplitude*(.70*cos(t*.24*p.speed+p.seed*.6)+.30*sin(t*.41+p.seed*2.3));
+  }
+}
+function drawConstellation(){
+  textFont("monospace");textAlign(CENTER,CENTER);noStroke();
+  for(const p of constellations){
+    fill(BLACK);if(p.type==="person")rect(p.x-2.6,p.y-2.6,5.2,5.2);
+    else circle(p.x,p.y,4.7);
+    textSize(p.type==="person"?10.4:10.8);textStyle(NORMAL);
+    text(p.label.toUpperCase(),p.x,p.y-11);
+  }
+}
+function updateGraph(){
+  if(motion===0 || draggingId && graph.nodes.length===0)return;
+  const nodes=graph.nodes, edges=graph.edges;
+  const dt=Math.min(1.4,Math.max(.35,deltaTime/16.67))*motion;
+  const forces=new Map(nodes.map(n=>[n.id,{x:0,y:0}]));
+  for(let i=0;i<nodes.length;i++){
+    const a=nodes[i];
+    for(let j=i+1;j<nodes.length;j++){
+      const b=nodes[j],dx=b.x-a.x,dy=b.y-a.y,dist2=dx*dx+dy*dy+200;
+      const dist=Math.sqrt(dist2),repel=2950/dist2;
+      const fx=repel*dx/dist,fy=repel*dy/dist;
+      forces.get(a.id).x-=fx;forces.get(a.id).y-=fy;
+      forces.get(b.id).x+=fx;forces.get(b.id).y+=fy;
+      // Évite que les étiquettes se recouvrent, même dans un réseau dense.
+      const safeX=(a.label.length+b.label.length)*3.25+9;
+      const safeY=25;
+      if(Math.abs(dx)<safeX && Math.abs(dy)<safeY){
+        const sx=dx===0?(unit(a.id+b.id)>.5?1:-1):Math.sign(dx);
+        const sy=dy===0?(unit(b.id+a.id)>.5?1:-1):Math.sign(dy);
+        const pushX=(safeX-Math.abs(dx))*.015;
+        const pushY=(safeY-Math.abs(dy))*.023;
+        forces.get(a.id).x-=sx*pushX;forces.get(b.id).x+=sx*pushX;
+        forces.get(a.id).y-=sy*pushY;forces.get(b.id).y+=sy*pushY;
+      }
+    }
+  }
+  for(const e of edges){
+    const a=graphPositions.get(e.a),b=graphPositions.get(e.b);
+    if(!a||!b)continue;
+    const dx=b.x-a.x,dy=b.y-a.y,dist=Math.max(1,Math.hypot(dx,dy));
+    const spring=(dist-(e.type==="research"?134:117))*.0026;
+    const fx=spring*dx/dist,fy=spring*dy/dist;
+    forces.get(a.id).x+=fx;forces.get(a.id).y+=fy;
+    forces.get(b.id).x-=fx;forces.get(b.id).y-=fy;
+  }
+  const t=millis()/1000;
+  for(const n of nodes){
+    if(n.id===draggingId){n.vx=0;n.vy=0;continue;}
+    const f=forces.get(n.id);
+    f.x+=(width/2-n.x)*.0008 + .022*Math.sin(t*.31+n.seed);
+    f.y+=(height/2-n.y)*.0008 + .022*Math.cos(t*.29+n.seed);
+    n.vx=(n.vx+f.x*dt)*.91;n.vy=(n.vy+f.y*dt)*.91;
+    n.x+=Math.max(-3,Math.min(3,n.vx))*dt;
+    n.y+=Math.max(-3,Math.min(3,n.vy))*dt;
+    const mX=Math.min(width*.36,Math.max(30,n.label.length*3.25+10));
+    n.x=Math.max(mX,Math.min(width-mX,n.x));n.y=Math.max(36,Math.min(height-38,n.y));
+  }
+}
+function drawEdges(){
+  const alpha=Math.min(1,Math.max(0,(millis()-lastPhaseChange)/1500));
+  const ctx=drawingContext;
+  ctx.save();ctx.lineCap="round";strokeWeight(.9);
+  for(const e of graph.edges){
+    if(e.type==="research"&&!graphShowResearch||e.type==="interdependency"&&!graphShowInterdep)continue;
+    const a=graphPositions.get(e.a),b=graphPositions.get(e.b);if(!a||!b)continue;
+    const highlighted=selectedId&&(e.a===selectedId||e.b===selectedId);
+    stroke(16,21,16,(highlighted?235:139)*alpha);
+    strokeWeight(highlighted?1.65:.82);
+    ctx.setLineDash(e.type==="research"?[1.2,5.2]:[]);
+    line(a.x,a.y,b.x,b.y);
+  }
+  ctx.restore();
+}
+function drawGraphNodes(){
+  textFont("monospace");textAlign(CENTER,CENTER);
+  hoveredId=hitNode(toModelX(mouseX),toModelY(mouseY))?.id||null;
+  for(const n of graph.nodes){
+    const highlight=n.id===selectedId||n.id===hoveredId;
+    noStroke();fill(BLACK);
+    if(n.type==="person")rect(n.x-(highlight?4:2.8),n.y-(highlight?4:2.8),highlight?8:5.6,highlight?8:5.6);
+    else if(n.type==="territory"){
+      push();translate(n.x,n.y);rotate(PI/4);rectMode(CENTER);rect(0,0,highlight?7:5.2,highlight?7:5.2);pop();
+    }else circle(n.x,n.y,highlight?8:5.6);
+    const shortLabel=n.label.toUpperCase();
+    textSize(n.type==="person"?10.2:10.8);
+    if(highlight){
+      rectMode(CORNER);const tw=textWidth(shortLabel);
+      fill(BG);rect(n.x-tw/2-5,n.y-23,tw+10,18);
+      fill(BLACK);
+    }
+    text(shortLabel,n.x,n.y-13);
+  }
+}
+const toModelX=(x)=>(x-width/2)/zoom+width/2;
+const toModelY=(y)=>(y-height/2)/zoom+height/2;
+function hitNode(x,y){
+  if(phase!==2)return null;
+  let best=null,dist=Infinity;
+  for(const n of graph.nodes){
+    const d=Math.hypot(n.x-x,n.y-y);
+    if(d<Math.max(15, Math.min(32,5+n.label.length*1.6)) && d<dist){best=n;dist=d;}
+  }
+  return best;
+}
+function mousePressed(){
+  if(phase!==2||mouseX<0||mouseY<0||mouseX>width||mouseY>height)return;
+  const target=hitNode(toModelX(mouseX),toModelY(mouseY));
+  selectedId=target?.id||null;draggingId=target?.id||null;updateSelection();
+  return false;
+}
+function mouseDragged(){
+  if(!draggingId)return;
+  const node=graphPositions.get(draggingId);if(!node)return;
+  node.x=Math.max(15,Math.min(width-15,toModelX(mouseX)));
+  node.y=Math.max(15,Math.min(height-15,toModelY(mouseY)));
+  node.vx=0;node.vy=0;return false;
+}
+function mouseReleased(){draggingId=null;}
+function windowResized(){
+  if(!stageEl)return;
+  const oldW=width,oldH=height;
+  resizeCanvas(Math.max(320,stageEl.clientWidth),Math.max(400,stageEl.clientHeight));
+  for(const p of constellations){p.baseX*=width/oldW;p.baseY*=height/oldH;}
+  for(const n of graph.nodes){n.x*=width/oldW;n.y*=height/oldH;}
+}
+function persist(){
+  const snapshot={version:1,phase,responses,extraConcepts,extraLinks,graphShowResearch,graphShowInterdep,motion,zoom,demo:startedDemo};
+  try{localStorage.setItem(STORAGE_KEY,JSON.stringify(snapshot));}catch(err){/* local storage unavailable in sandbox */}
+}
+function restoreLocal(){
+  try{
+    const data=JSON.parse(localStorage.getItem(STORAGE_KEY)||"null");if(!data||data.version!==1)return;
+    takeData(data,true);
+  }catch(err){/* ignore invalid local save */}
+}
+function takeData(data,replace){
+  const entries=(Array.isArray(data.responses)?data.responses:[]).slice(0,1000).filter(r=>r&&clean(r.object)&&clean(r.author))
+    .map(r=>({id:clean(r.id)||uid(),author:clean(r.author),object:clean(r.object),
+      depends:distinct(Array.isArray(r.depends)?r.depends:[]),transforms:distinct(Array.isArray(r.transforms)?r.transforms:[]),
+      territories:distinct(Array.isArray(r.territories)?r.territories:[]),demo:!!r.demo}));
+  const concepts=distinct(Array.isArray(data.extraConcepts)?data.extraConcepts:[]);
+  const links=(Array.isArray(data.extraLinks)?data.extraLinks:[]).filter(e=>e&&clean(e.a)&&clean(e.b))
+    .map(e=>({id:clean(e.id)||uid(),a:clean(e.a),b:clean(e.b),verb:clean(e.verb)||"est lié à"}));
+  if(replace){responses=entries;extraConcepts=concepts;extraLinks=links;}
+  else{
+    const byId=new Map(responses.map(r=>[r.id,r]));entries.forEach(r=>byId.set(r.id,r));responses=[...byId.values()];
+    extraConcepts=distinct([...extraConcepts,...concepts]);
+    const byLinkId=new Map(extraLinks.map(e=>[e.id,e]));links.forEach(e=>byLinkId.set(e.id,e));extraLinks=[...byLinkId.values()];
+  }
+  if(replace){phase=data.phase===2?2:1;graphShowResearch=data.graphShowResearch!==false;
+    graphShowInterdep=data.graphShowInterdep!==false;
+    motion=typeof data.motion==="number"?Math.max(0,Math.min(1,data.motion)):.7;
+    zoom=typeof data.zoom==="number"?Math.max(.65,Math.min(1.65,data.zoom)):1;}
+  startedDemo=responses.some(r=>r.demo);
+}
+function downloadFile(text,filename,mime){
+  const blob=new Blob([text],{type:mime}),url=URL.createObjectURL(blob),a=document.createElement("a");
+  a.href=url;a.download=filename;document.body.appendChild(a);a.click();a.remove();
+  setTimeout(()=>URL.revokeObjectURL(url),1000);
+}
+function exportJSON(){
+  const file={version:1,title:EVENT_TITLE,exportedAt:new Date().toISOString(),participants:PEOPLE,
+    phase,responses,extraConcepts,extraLinks,graphShowResearch,graphShowInterdep,motion,zoom};
+  downloadFile(JSON.stringify(file,null,2),"metabolisme-chile-france-contributions.json","application/json;charset=utf-8");
+}
+function importJSON(e){
+  const file=e.target.files?.[0];if(!file)return;
+  const reader=new FileReader();
+  reader.onload=()=>{
+    try{
+      const data=JSON.parse(reader.result);
+      if(!data||!Array.isArray(data.responses))throw new Error("Le JSON doit contenir une liste responses.");
+      const mode=$("importMode").value;
+      if(mode==="replace"&&!confirm("Remplacer les contributions actuelles par ce fichier ?"))return;
+      takeData(data,mode==="replace");clearForm();changed();
+      $("formNotice").textContent="Fichier importé ("+(mode==="merge"?"fusion":"remplacement")+").";
+    }catch(err){alert("Import impossible : "+err.message);}
+  };
+  reader.readAsText(file,"utf-8");e.target.value="";
+}
+function loadDemo(){
+  if(responses.length&& !confirm("Ajouter cinq fiches FICTIVES pour prévisualiser la deuxième journée ?"))return;
+  const fake=[
+    ["EXEMPLE A (fictif)","centres de données","eau ; électricité ; travail","chaleur ; territoires","Quilicura ; Chili"],
+    ["EXEMPLE B (fictif)","modèles d’IA","données ; calcul ; centres de données","services publics","France ; Chili"],
+    ["EXEMPLE C (fictif)","gouvernance environnementale","régulation ; territoires","centres de données","France"],
+    ["EXEMPLE D (fictif)","travail des données","plateformes ; données","modèles d’IA","Chili"],
+    ["EXEMPLE E (fictif)","énergie","minéraux ; territoires","chaleur","France ; Chili"]
+  ];
+  fake.forEach(x=>responses.push({id:uid(),author:x[0],object:x[1],depends:splitTags(x[2]),
+    transforms:splitTags(x[3]),territories:splitTags(x[4]),demo:true}));
+  startedDemo=true;changed();setPhase(2);
+  $("formNotice").textContent="DÉMONSTRATION FICTIVE : supprimez les fiches d’exemple avant le véritable atelier.";
+}
+function clearAll(){
+  if(!confirm("Effacer toutes les réponses et relations manuelles dans ce navigateur ? Exportez d’abord un JSON si besoin."))return;
+  responses=[];extraConcepts=[];extraLinks=[];startedDemo=false;clearForm();changed();setPhase(1);
+}
+
+</script></body></html>
