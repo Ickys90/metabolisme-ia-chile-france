@@ -572,7 +572,7 @@ function drawEdges(){
     if(e.type==="research"&&!graphShowResearch||e.type==="interdependency"&&!graphShowInterdep)continue;
     const a=graphPositions.get(e.a),b=graphPositions.get(e.b);if(!a||!b)continue;
     const highlighted=selectedId&&(e.a===selectedId||e.b===selectedId);
-    stroke(255,255,255,(highlighted?235:139)*alpha);
+    stroke(255,139,252,(highlighted?235:139)*alpha);
     strokeWeight(highlighted?1.65:.82);
     ctx.setLineDash(e.type==="research"?[1.2,5.2]:[]);
     line(a.x,a.y,b.x,b.y);
